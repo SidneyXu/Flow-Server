@@ -1,3 +1,8 @@
 - [ ] ​文件上传
-- [ ] Vert.X 可配置
+- [ ] Vert.x 实例可配置
 - [ ] Log 文件配置
+- [ ] Standalone Jar
+- [ ] Deploy
+- [x] Base Context
+- [ ] Resource Config
+- [ ] 修改 Runner

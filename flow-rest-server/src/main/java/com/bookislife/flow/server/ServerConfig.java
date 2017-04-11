@@ -20,11 +20,13 @@ public class ServerConfig {
     public static final String PROPS_FILE_NAME = "flow.properties";
 
     public static final String PROPS_SERVER_PORT = "flow.server.port";
+    public static final String PROPS_SERVER_CONTEXT = "flow.server.context";
     public static final String PROPS_PACKAGE_NAME = "flow.package.name";
     public static final String PROPS_RESOURCE_PATH = "flow.resource.path";
 
     public static final String DEFAULT_PORT = "10086";
 
+    public final String baseContext;
     public final int port;
     public final String packageName;
     public final String resourcePath;
@@ -38,6 +40,7 @@ public class ServerConfig {
             Properties properties = new Properties();
             properties.load(inputStream);
             port = Integer.valueOf(properties.getProperty(PROPS_SERVER_PORT, DEFAULT_PORT));
+            baseContext = properties.getProperty(PROPS_SERVER_CONTEXT, null);
             packageName = properties.getProperty(PROPS_PACKAGE_NAME, null);
 
             Validator.assertNotNull(packageName, PROPS_PACKAGE_NAME + " is missing.");

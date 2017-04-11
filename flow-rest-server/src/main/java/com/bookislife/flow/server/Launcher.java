@@ -3,6 +3,7 @@ package com.bookislife.flow.server;
 import com.bookislife.flow.core.exception.FlowException;
 import com.bookislife.flow.core.utils.Pair;
 import com.bookislife.flow.server.domain.RoutingContextWrapper;
+import com.bookislife.flow.server.utils.CommonUtil;
 import com.bookislife.flow.server.utils.JacksonWriter;
 import com.bookislife.flow.server.utils.ResponseCreator;
 import com.bookislife.flow.server.utils.Runner;
@@ -84,11 +85,17 @@ public class Launcher extends AbstractVerticle {
 
     private Route applyRoute(Router router, ResourceDescriptor cd, ResourceDescriptor md) {
         Route route = router.route();
-        if (null == md.path) {
-            route.path(cd.path.replaceAll("\\{(.*)\\}$", ":$1"));
-        } else {
-            String path = "/".equals(cd.path) ? md.path + md.path : cd.path + "/" + md.path;
-            route.path(path.replaceAll("\\{(.*)\\}$", ":$1"));
+        if (null != cd.path) {
+            if (null == md.path) {
+                route.path(cd.path.replaceAll("\\{(.*)\\}$", ":$1"));
+            } else {
+                String path = "/".equals(cd.path) ? md.path + md.path : cd.path + "/" + md.path;
+                route.path(path.replaceAll("\\{(.*)\\}$", ":$1"));
+            }
+            if (serverConfig.baseContext != null) {
+                String contextPath = CommonUtil.addPrefix(serverConfig.baseContext, "/");
+                route.path(contextPath + route.getPath());
+            }
         }
         if (null != md.httpMethod) {
             route.method(HttpMethod.valueOf(md.httpMethod));
@@ -331,7 +338,9 @@ public class Launcher extends AbstractVerticle {
         // ioc
         injector = Guice.createInjector(new ServerModule());
 
-        serverConfig = new ServerConfig();
+        if (serverConfig == null) {
+            serverConfig = new ServerConfig();
+        }
     }
 
     public Injector getInjector() {
